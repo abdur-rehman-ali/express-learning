@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 import User from "../models/user.js"
 
@@ -17,7 +18,11 @@ class UsersController {
             const hashPassword = await bcrypt.hash(password, salt)
             const userData = new User({ name, email, password: hashPassword, termsAndConditions })
             await userData.save()
-            res.status(201).send({ status: "success", message: "Registration Successfull!!!" })
+            const savedUser = User.find({ email })
+            const payload = { userID: savedUser._id }
+            const options = { expiresIn: '1d' }
+            const token = jwt.sign(payload, process.env.SECRET_KEY, options)
+            res.status(201).send({ status: "success", message: "Registration Successfull!!!", token: token })
           } catch (error) {
             res.send({ status: "failed", message: error.message })
           }

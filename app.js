@@ -1,4 +1,6 @@
 import express from "express";
+import dotenv from 'dotenv'
+dotenv.config()
 
 import postsRoutes from "./routes/postsRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
