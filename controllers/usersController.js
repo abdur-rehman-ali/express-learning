@@ -17,7 +17,7 @@ class UsersController {
             const hashPassword = await bcrypt.hash(password, salt)
             const userData = new User({ name, email, password: hashPassword, termsAndConditions })
             await userData.save()
-            res.send({ status: "success", message: "Registration Succesfull!!!" })
+            res.status(201).send({ status: "success", message: "Registration Successfull!!!" })
           } catch (error) {
             res.send({ status: "failed", message: error.message })
           }
