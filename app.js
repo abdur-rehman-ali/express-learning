@@ -1,7 +1,8 @@
 import express from "express";
-import bodyParser from "body-parser";
 
 import postsRoutes from "./routes/postsRoutes.js";
+import usersRoutes from "./routes/usersRoutes.js";
+
 import connectDatabase from "./database/connectDatabase.js";
 
 const app = express()
@@ -13,6 +14,7 @@ connectDatabase(DATABASE_URL)
 // Middlewares
 app.use(express.json())
 
+app.use('/', usersRoutes)
 app.use('/posts', postsRoutes)
 
 app.listen(PORT, () => {
