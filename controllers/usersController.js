@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import e from 'express'
 import jwt from 'jsonwebtoken'
 
 import User from "../models/user.js"
@@ -41,7 +42,7 @@ class UsersController {
       const { email, password } = req.body
       if (email && password) {
         const user = await User.findOne({ email })
-        if (user) { 
+        if (user) {
           const isPasswordMatch = await bcrypt.compare(password, user.password)
           const isEmailMatch = (user.email === email)
           if (isEmailMatch && isPasswordMatch) {
@@ -60,6 +61,27 @@ class UsersController {
       }
     } catch (error) {
       res.send({ status: "failed", message: "Unable to login" })
+    }
+  }
+
+  static changePassword = async (req, res) => {
+    try {
+      const { password, password_confirmation } = req.body
+      if (password && password_confirmation) {
+        if (password === password_confirmation) {
+          const { _id } = req.user
+          const salt = await bcrypt.genSalt(10)
+          const hashPassword = await bcrypt.hash(password, salt)
+          await User.findByIdAndUpdate(_id, { password: hashPassword })
+          res.send({ status: "success", message: "Password updated successfully" })
+        } else {
+          res.send({ status: "failed", message: "Password and Password confirmation didn't match!!!" })
+        }
+      } else {
+        res.send({ status: "failed", message: "Both fields are required" })
+      }
+    } catch (error) {
+      res.send({ status: "failed", message: error.message })
     }
   }
 }
