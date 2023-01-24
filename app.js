@@ -8,7 +8,7 @@ import usersRoutes from "./routes/usersRoutes.js";
 import connectDatabase from "./database/connectDatabase.js";
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 8000
 const DATABASE_URL = 'mongodb://localhost:27017/PostsApplication'
 
 connectDatabase(DATABASE_URL)

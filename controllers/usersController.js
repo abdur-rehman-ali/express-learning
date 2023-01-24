@@ -35,6 +35,33 @@ class UsersController {
     }
 
   }
+
+  static userLogin = async (req, res) => {
+    try {
+      const { email, password } = req.body
+      if (email && password) {
+        const user = await User.findOne({ email })
+        if (user) { 
+          const isPasswordMatch = await bcrypt.compare(password, user.password)
+          const isEmailMatch = (user.email === email)
+          if (isEmailMatch && isPasswordMatch) {
+            const payload = { userID: user._id }
+            const options = { expiresIn: '1d' }
+            const token = await jwt.sign(payload, process.env.SECRET_KEY, options)
+            res.send({ status: "Success", message: "Login Successfull", token: token })
+          } else {
+            res.send({ status: "failed", message: "Email or password in invalid!!!" })
+          }
+        } else {
+          res.send({ status: "failed", message: "You are not registered user!!!" })
+        }
+      } else {
+        res.send({ status: "failed", message: "All fields are required!!!" })
+      }
+    } catch (error) {
+      res.send({ status: "failed", message: "Unable to login" })
+    }
+  }
 }
 
 export default UsersController
