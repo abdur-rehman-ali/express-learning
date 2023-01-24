@@ -11,6 +11,7 @@ router.post('/login', UsersController.userLogin)
 
 //protected routes
 router.post('/change-password', authMiddleware, UsersController.changePassword)
+router.get('/current-user', authMiddleware, UsersController.currentUser)
 
 
 

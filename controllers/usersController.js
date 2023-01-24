@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import e from 'express'
 import jwt from 'jsonwebtoken'
 
 import User from "../models/user.js"
@@ -80,6 +79,14 @@ class UsersController {
       } else {
         res.send({ status: "failed", message: "Both fields are required" })
       }
+    } catch (error) {
+      res.send({ status: "failed", message: error.message })
+    }
+  }
+
+  static currentUser = async (req, res) => {
+    try {
+      res.send({ user: req.user })
     } catch (error) {
       res.send({ status: "failed", message: error.message })
     }
