@@ -9,6 +9,8 @@ const router = express.Router()
 router.post('/register', UsersController.userRegistration)
 router.post('/login', UsersController.userLogin)
 router.post('/send-reset-password-email', UsersController.resetPasswordEmail)
+router.post('/reset-password/:id/:token', UsersController.resetPassword)
+
 
 //protected routes
 router.post('/change-password', authMiddleware, UsersController.changePassword)

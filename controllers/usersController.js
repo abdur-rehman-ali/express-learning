@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import e from 'express'
 import jwt from 'jsonwebtoken'
 
 import User from "../models/user.js"
@@ -102,13 +103,37 @@ class UsersController {
           const payload = { userID: user._id }
           const options = { expiresIn: '15m' }
           const token = jwt.sign(payload, secret, options)
-          const link = `${process.env.BASE_URL}/reset/${user._id}/${token}`
+          const link = `${process.env.BASE_URL}/reset-password/${user._id}/${token}`
           res.send({ status: 'success', link: link })
         } else {
           res.send({ status: 'failed', message: 'User with this email does not exist!' })
         }
       } else {
         res.send({ status: 'failed', message: 'Email is required!' })
+      }
+    } catch (error) {
+      res.send({ status: 'failed', message: error.message })
+    }
+  }
+
+  static resetPassword = async (req, res) => {
+    const { password, password_confirmation } = req.body
+    const { id, token } = req.params
+    try {
+      const user = await User.findById(id)
+      const secret_key = `${user._id}${process.env.SECRET_KEY}`
+      const { userID } = jwt.verify(token, secret_key)
+      if (password && password_confirmation) {
+        if (password === password_confirmation) {
+          const salt = await bcrypt.genSalt(10)
+          const hashPassword = await bcrypt.hash(password, salt)
+          await User.findByIdAndUpdate(userID, { $set: { password: hashPassword } })
+          res.send({ "status": "success", "message": "Password Reset Successfully" })
+        } else {
+          res.send({ status: "failed", message: "Password didn't match!!!" })
+        }
+      } else {
+        res.send({ status: "failed", message: "All fields are required!!!" })
       }
     } catch (error) {
       res.send({ status: 'failed', message: error.message })
