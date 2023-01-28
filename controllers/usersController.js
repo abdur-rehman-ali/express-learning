@@ -91,6 +91,29 @@ class UsersController {
       res.send({ status: "failed", message: error.message })
     }
   }
+
+  static resetPasswordEmail = async (req, res) => {
+    try {
+      const { email } = req.body
+      if (email) {
+        const user = await User.findOne({ email })
+        if (user) {
+          const secret = `${user._id}${process.env.SECRET_KEY}`
+          const payload = { userID: user._id }
+          const options = { expiresIn: '15m' }
+          const token = jwt.sign(payload, secret, options)
+          const link = `${process.env.BASE_URL}/reset/${user._id}/${token}`
+          res.send({ status: 'success', link: link })
+        } else {
+          res.send({ status: 'failed', message: 'User with this email does not exist!' })
+        }
+      } else {
+        res.send({ status: 'failed', message: 'Email is required!' })
+      }
+    } catch (error) {
+      res.send({ status: 'failed', message: error.message })
+    }
+  }
 }
 
 export default UsersController

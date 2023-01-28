@@ -8,6 +8,7 @@ const router = express.Router()
 //public routes
 router.post('/register', UsersController.userRegistration)
 router.post('/login', UsersController.userLogin)
+router.post('/send-reset-password-email', UsersController.resetPasswordEmail)
 
 //protected routes
 router.post('/change-password', authMiddleware, UsersController.changePassword)
