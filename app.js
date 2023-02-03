@@ -6,19 +6,28 @@ import postsRoutes from "./routes/postsRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 
 import connectDatabase from "./database/connectDatabase.js";
+import pageNotFound from "./middlewares/pageNotFound.js";
 
 const app = express()
 const PORT = process.env.PORT || 8000
-const DATABASE_URL = 'mongodb://localhost:27017/PostsApplication'
 
-connectDatabase(DATABASE_URL)
 
 // Middlewares
 app.use(express.json())
 
 app.use('/', usersRoutes)
 app.use('/posts', postsRoutes)
+app.use(pageNotFound)
 
-app.listen(PORT, () => {
-  console.log(`Server runnin on port ${PORT}`);
-})
+const start = async () => {
+  try {
+    await connectDatabase(process.env.DATABASE_URL)
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    })
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+start()

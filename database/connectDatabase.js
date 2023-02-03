@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
 
-const connectDatabase = async DATABASE_URL => {
-  try {
-    await mongoose.connect(DATABASE_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
-    console.log('Database connected!!!');
-  } catch (error) {
-    console.log('Error while connecting DB', error.message);
-  }
+//This method will return a promise
+const connectDatabase = DATABASE_URL => {
+  return mongoose.connect(DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
 }
 
 export default connectDatabase
