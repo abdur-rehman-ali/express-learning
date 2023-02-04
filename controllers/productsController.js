@@ -13,15 +13,14 @@ class ProductsController {
   })
 
   static searchProducts = asyncHandler(async (req, res) => {
-    const { featured, company, name } = req.query
+    const { featured, company, name, sort } = req.query
     const searchQuery = {}
 
     featured ? searchQuery.featured = (featured === 'true' ? true : false) : searchQuery
     company ? searchQuery.company = company : searchQuery
     name ? searchQuery.name = { $regex: name, $options: 'i' } : searchQuery
 
-
-    const products = await Product.find(searchQuery)
+    const products = await Product.find(searchQuery).sort(sort)
     res.status(200).json({
       status: 'success',
       count: products.length,
