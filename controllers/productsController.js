@@ -20,7 +20,13 @@ class ProductsController {
     company ? searchQuery.company = company : searchQuery
     name ? searchQuery.name = { $regex: name, $options: 'i' } : searchQuery
 
-    const products = await Product.find(searchQuery).sort(sort)
+    let findProducts = Product.find(searchQuery)
+    if (sort) {
+      const sortList = sort.split(',').join(' ')
+      findProducts = findProducts.sort(sortList)
+    }
+    
+    const products = await findProducts
     res.status(200).json({
       status: 'success',
       count: products.length,
