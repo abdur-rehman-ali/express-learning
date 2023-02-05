@@ -4,6 +4,7 @@ dotenv.config()
 
 import postsRoutes from "./routes/postsRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
+import productsRoutes from "./routes/productsRoutes.js";
 
 import connectDatabase from "./database/connectDatabase.js";
 import pageNotFound from "./middlewares/pageNotFound.js";
@@ -17,6 +18,7 @@ app.use(express.json())
 
 app.use('/', usersRoutes)
 app.use('/posts', postsRoutes)
+app.use('/products', productsRoutes)
 app.use(pageNotFound)
 
 const start = async () => {
