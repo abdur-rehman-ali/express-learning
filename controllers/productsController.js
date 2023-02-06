@@ -13,7 +13,7 @@ class ProductsController {
   })
 
   static searchProducts = asyncHandler(async (req, res) => {
-    const { featured, company, name, sort } = req.query
+    const { featured, company, name, sort, fields, page, limit } = req.query
     const searchQuery = {}
 
     featured ? searchQuery.featured = (featured === 'true' ? true : false) : searchQuery
@@ -21,11 +21,23 @@ class ProductsController {
     name ? searchQuery.name = { $regex: name, $options: 'i' } : searchQuery
 
     let findProducts = Product.find(searchQuery)
+    
     if (sort) {
       const sortList = sort.split(',').join(' ')
       findProducts = findProducts.sort(sortList)
     }
-    
+
+    if (fields) {
+      const fieldsList = fields.split(',').join(' ')
+      findProducts = findProducts.select(fieldsList)
+    }
+
+    const pageNo = Number(page) || 1
+    const limitNo = Number(limit) || 10
+    const skip = (pageNo - 1) * limitNo
+
+    findProducts = findProducts.skip(skip).limit(limitNo)
+
     const products = await findProducts
     res.status(200).json({
       status: 'success',
